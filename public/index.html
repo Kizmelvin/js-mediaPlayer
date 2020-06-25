@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Html Video Player</title>
+    <link rel="stylesheet" href="player.css">
+   
+</head>
+<body>
+    
+        <div class="player"> 
+            <div class="video-space">
+        <video class="player__video viewer" src="video/shekere1.mp4"></video>
+        <div class="player__controls">
+            <div class="progress">
+                 <div class="progress__filled">
+            </div>
+            </div>
+            <button class="player__button toggle" title="Toggle play">play</button>
+            <button data-skip = "-10" class="player__button">-10s </button>
+            <button data-skip = "25" class="player__button">+25s </button>
+            <input type="range" name="volume" class="player__slider" min="0" max="1" step="0.05" value="1">
+        </div>
+    </div>
+        
+    </div>
+    <script>
+        // Get Our Elements
+        const player = document.querySelector('.player');
+        const video = player.querySelector('.viewer');
+        const progress = player.querySelector('.progress');
+        const progressBar = player.querySelector('.progress__filled');
+        const toggle = player.querySelector('.toggle');
+        const skipButtons = player.querySelectorAll('[data-skip]');
+        const ranges = player.querySelectorAll('.player__slider');
+
+        // Build our Functions
+        function togglePlay() {
+            if (video.paused){
+                video.play();
+            }else {
+                video.pause();
+            }
+            }
+
+        function updateButton(){
+         const btn = this.paused ? 'play' : 'pause';
+         toggle.textContent = btn;      
+        }
+
+     
+        
+        function skip(){       
+        video.currentTime += parseFloat(this.dataset.skip);
+          }
+
+        function handleRangeUpdate(){
+            video[this.name] = this.value;
+            
+        }
+        function scrub(e) {
+            const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
+            video.currentTime = scrubTime;
+        }
+        function handleProgress(){
+            const percent = video.currentTime / video.duration;
+            progressBar.style.width = percent * 100 + "%";
+           
+        }
+
+        // Hook Our Events
+        video.addEventListener('click', togglePlay);
+        video.addEventListener('play', updateButton);
+        video.addEventListener('pause', updateButton);
+        video.addEventListener('timeupdate', handleProgress);
+        toggle.addEventListener('click',togglePlay);
+        skipButtons.forEach(button => button.addEventListener('click',skip));
+        ranges.forEach(range => range.addEventListener('change', handleRangeUpdate));
+        ranges.forEach(range => range.addEventListener('mousemove', handleRangeUpdate));
+        progress.addEventListener('click', scrub);
+    </script>
+</body>
+</html>
